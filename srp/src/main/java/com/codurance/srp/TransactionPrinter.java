@@ -6,7 +6,6 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,12 +16,12 @@ public class TransactionPrinter {
     private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final String AMOUNT_FORMAT = "#.00";
 
-    private TransactionRepository transactionRepository;
-    private Console console;
+    private final TransactionRepository transactionRepository;
+    private final Printer printer;
 
-    public TransactionPrinter(TransactionRepository transactionRepository, Console console) {
+    public TransactionPrinter(TransactionRepository transactionRepository, Printer printer) {
         this.transactionRepository = transactionRepository;
-        this.console = console;
+        this.printer = printer;
     }
 
     public void printStatement() {
@@ -31,7 +30,7 @@ public class TransactionPrinter {
     }
 
     private void printHeader() {
-        printLine(STATEMENT_HEADER);
+        this.printer.printLine(STATEMENT_HEADER);
     }
 
     private void printTransactions() {
@@ -40,7 +39,7 @@ public class TransactionPrinter {
                 .map(transaction -> statementLine(transaction, balance.addAndGet(transaction.amount())))
                 .collect(toCollection(LinkedList::new))
                 .descendingIterator()
-                .forEachRemaining(this::printLine);
+                .forEachRemaining(this.printer::printLine);
     }
 
     private String statementLine(Transaction transaction, int balance) {
@@ -55,9 +54,5 @@ public class TransactionPrinter {
     private String formatNumber(int amount) {
         DecimalFormat decimalFormat = new DecimalFormat(AMOUNT_FORMAT, DecimalFormatSymbols.getInstance(Locale.UK));
         return decimalFormat.format(amount);
-    }
-
-    private void printLine(String line) {
-        console.printLine(line);
     }
 }
