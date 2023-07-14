@@ -13,7 +13,9 @@ import java.util.Collections;
 
 import static com.codurance.dip.EmployeeBuilder.anEmployee;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doAnswer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BirthdayGreeterShould {
@@ -23,12 +25,13 @@ public class BirthdayGreeterShould {
 
     @Mock
     private EmployeeRepository employeeRepository;
+    @Mock()
+    private IEmailSender emailSender;
     @Mock
     private Clock clock;
 
     @InjectMocks
     private BirthdayGreeter birthdayGreeter;
-
 
     private ByteArrayOutputStream consoleContent = new ByteArrayOutputStream();
 
@@ -38,15 +41,16 @@ public class BirthdayGreeterShould {
         given(clock.monthDay()).willReturn(TODAY);
         Employee employee = anEmployee().build();
         given(employeeRepository.findEmployeesBornOn(MonthDay.of(CURRENT_MONTH, CURRENT_DAY_OF_MONTH))).willReturn(Collections.singletonList(employee));
+        doAnswer(invocation -> {
+            System.out.print("To:" + employee.getEmail() + ", Subject: Happy birthday!, Message: Happy birthday, dear " + employee.getFirstName() + "!");
+            return null;
+        }).when(emailSender).send(any(Email.class));
 
         birthdayGreeter.sendGreetings();
 
         String actual = consoleContent.toString();
         assertThat(actual)
-                .isEqualTo("To:" + employee.getEmail() + ", Subject: Happy birthday!, Message: Happy birthday, dear " + employee.getFirstName()+"!");
-
+                .isEqualTo("To:" + employee.getEmail() + ", Subject: Happy birthday!, Message: Happy birthday, dear " + employee.getFirstName() + "!");
     }
-
-
 
 }
