@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EmployeeShould {
+class EmployeeTest {
 
     private static final int BONUS = 100;
     private static final int SALARY = 1000;
@@ -16,11 +16,10 @@ class EmployeeShould {
                 .isEqualTo(SALARY);
     }
 
-
     @Test
     public void add_bonus_to_the_manager_pay_amount() {
         Employee employee = new Manager(SALARY, BONUS);
         assertThat(employee.payAmount())
-                .isEqualTo(SALARY+BONUS);
+                .isEqualTo(SALARY + BONUS);
     }
 }
