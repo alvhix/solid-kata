@@ -1,14 +1,20 @@
 package com.codurance.lsp;
 
 public class PetrolCar extends Vehicle {
-    protected static final int FUEL_TANK_FULL = 100;
-    protected int fuelTankLevel = 0;
+  private static final int FUEL_TANK_FULL = 100;
+  private int fuelTankLevel = 0;
 
-    public int fuelTankLevel() {
-        return fuelTankLevel;
-    }
+  @Override
+  public void fillUpWithFuel() {
+    this.fuelTankLevel = FUEL_TANK_FULL;
+  }
 
-    public void fillUpWithFuel() {
-        this.fuelTankLevel = FUEL_TANK_FULL;
-    }
+  @Override
+  public void chargeBattery() {
+    throw new UnsupportedOperationException("A petrol car cannot be recharged");
+  }
+
+  public int fuelTankLevel() {
+    return fuelTankLevel;
+  }
 }
